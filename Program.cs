@@ -1,4 +1,6 @@
-﻿const string ConnectionVariableName = "HOLIDAY_MAKER_DB";
+﻿using MySqlConnector;
+
+const string ConnectionVariableName = "HOLIDAY_MAKER_DB";
 
 string? connectionString = Environment.GetEnvironmentVariable(ConnectionVariableName);
 
@@ -12,5 +14,16 @@ if (string.IsNullOrWhiteSpace(connectionString))
 
 HolidayMakerRepository repository = new(connectionString);
 
-List<Customer> customers = await repository.GetCustomersAsync();
-ui.ShowCustomerList(customers);
+try
+{
+    List<Customer> customers = await repository.GetCustomersAsync();
+    ui.ShowCustomerList(customers);
+}
+catch (MySqlException ex) when (ex.ErrorCode == MySqlErrorCode.AccessDenied)
+{
+    ui.ShowAccessDeniedMessage();
+}
+catch (MySqlException)
+{
+    ui.ShowDatabaseErrorMessage();
+}

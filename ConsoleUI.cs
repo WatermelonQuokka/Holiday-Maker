@@ -5,6 +5,16 @@ class ConsoleUI
         Console.WriteLine($"The environment variable {variableName} is missing or empty.");
     }
 
+    public void ShowAccessDeniedMessage()
+    {
+        Console.WriteLine("The connection string contains the wrong username or password.");
+    }
+
+    public void ShowDatabaseErrorMessage()
+    {
+        Console.WriteLine("There seems to be a problem with the database right now, try again in a minute.");
+    }
+
     public void ShowCustomerList(List<Customer> customers)
     {
         if (customers.Count == 0)
