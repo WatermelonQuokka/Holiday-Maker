@@ -9,3 +9,5 @@ if (string.IsNullOrWhiteSpace(connectionString))
     ui.ShowMissingConnectionVariable(ConnectionVariableName);
     return;
 }
+
+HolidayMakerRepository repository = new(connectionString);
