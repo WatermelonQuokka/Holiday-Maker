@@ -11,3 +11,6 @@ if (string.IsNullOrWhiteSpace(connectionString))
 }
 
 HolidayMakerRepository repository = new(connectionString);
+
+List<Customer> customers = await repository.GetCustomersAsync();
+ui.ShowCustomerList(customers);
