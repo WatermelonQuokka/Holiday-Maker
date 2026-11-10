@@ -1,0 +1,1 @@
+record Customer(uint Id, string Name, string PhoneNumber);
