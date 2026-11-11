@@ -1,3 +1,4 @@
+using System.Collections;
 using MySqlConnector;
 class HolidayMakerApp
 {
@@ -70,6 +71,31 @@ class HolidayMakerApp
 
     private async Task IdentifyCustomerAsync()
     {
+        CustomerMenuChoice choice = _ui.AskForCustomerMenuChoice();
+        switch (choice)
+        {
+            case CustomerMenuChoice.New:
+                {
+                    _ui.ShowNotImplementedMessage();
+                    break;
+                }
+            case CustomerMenuChoice.Existing:
+                {
+                    await SelectCustomerAsync();
+                    break;
+                }
+            case CustomerMenuChoice.Back:
+                {
+                    break;
+                }
+            default:
+                throw new ArgumentOutOfRangeException(
+                    nameof(choice), choice, "Unknown choice.");
+        }
+    }
+
+    private async Task SelectCustomerAsync()
+    {
         List<Customer> customers = await _repository.GetCustomersAsync();
 
         if (customers.Count == 0)
@@ -77,7 +103,7 @@ class HolidayMakerApp
             _ui.ShowEmptyCustomerListMessage();
             return;
         }
-        
+
         Customer? chosenCustomer = _ui.AskForCustomerChoice(customers);
         if (chosenCustomer != null)
         {

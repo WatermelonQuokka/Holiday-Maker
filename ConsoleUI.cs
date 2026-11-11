@@ -122,4 +122,32 @@ class ConsoleUI
     {
         _lastMessage = "No customers found.";
     }
+
+    private void ShowCustomerMenu()
+    {
+        Console.WriteLine(
+        """
+        1. New customer
+        2. Existing customer
+        0. Go back to main menu
+        """);
+    }
+
+    public CustomerMenuChoice AskForCustomerMenuChoice()
+    {
+        while (true)
+        {
+            Console.Clear();
+            Console.WriteLine(_lastMessage);
+            _lastMessage = null;
+            ShowCustomerMenu();
+            int? choice = ReadNumber("Choose an option: ");
+            if (choice != null
+                && Enum.IsDefined(typeof(CustomerMenuChoice), choice.Value))
+            {
+                return (CustomerMenuChoice)choice.Value;
+            }
+            _lastMessage = "Invalid option choice.";
+        }
+    }
 }
