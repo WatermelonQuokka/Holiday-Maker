@@ -76,7 +76,7 @@ class HolidayMakerApp
         {
             case CustomerMenuChoice.New:
                 {
-                    _ui.ShowNotImplementedMessage();
+                    await RegisterCustomerAsync();
                     break;
                 }
             case CustomerMenuChoice.Existing:
@@ -108,6 +108,23 @@ class HolidayMakerApp
         if (chosenCustomer != null)
         {
             _currentCustomer = chosenCustomer;
+        }
+    }
+
+    private async Task RegisterCustomerAsync()
+    {
+        string name = _ui.AskForCustomerName();
+        string phoneNumber = _ui.AskForCustomerPhoneNumber();
+        string? email = _ui.AskForCustomerEmail();
+        try
+        {
+            Customer newCustomer = await _repository.AddCustomerAsync(name, phoneNumber, email);
+            _currentCustomer = newCustomer;
+            _ui.ShowCustomerAddedMessage(newCustomer);
+        }
+        catch (MySqlException ex) when (ex.ErrorCode == MySqlErrorCode.DuplicateKeyEntry)
+        {
+            _ui.ShowDuplicateCustomerMessage();
         }
     }
 }

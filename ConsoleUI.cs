@@ -3,6 +3,9 @@ class ConsoleUI
     private string? _lastMessage;
     private const int FirstPosition = 1;
     private const int GoBackToMenu = 0;
+    private const int NameMaxLength = 64;
+    private const int PhoneNumberMaxLength = 32;
+    private const int EmailMaxLength = 128;
     public void ShowMissingConnectionVariable(string variableName)
     {
         Console.WriteLine($"The environment variable {variableName} is missing or empty.");
@@ -149,5 +152,71 @@ class ConsoleUI
             }
             _lastMessage = "Invalid option choice.";
         }
+    }
+
+    public string AskForCustomerName()
+    {
+        while (true)
+        {
+            string name = ReadText("What is the customer's name: ");
+            if (string.IsNullOrEmpty(name))
+            {
+                Console.WriteLine("Name can't be empty.");
+                continue;
+            }
+            if (name.Length > NameMaxLength)
+            {
+                Console.WriteLine($"Name can't be longer than {NameMaxLength} characters.");
+                continue;
+            }
+            return name;
+        }
+    }
+
+    public string AskForCustomerPhoneNumber()
+    {
+        while (true)
+        {
+            string phoneNumber = ReadText("What is the customer's phone number: ");
+            if (string.IsNullOrEmpty(phoneNumber))
+            {
+                Console.WriteLine("Phone number can't be empty.");
+                continue;
+            }
+            if (phoneNumber.Length > PhoneNumberMaxLength)
+            {
+                Console.WriteLine($"Phone number can't be longer than {PhoneNumberMaxLength} characters.");
+                continue;
+            }
+            return phoneNumber;
+        }
+    }
+
+    public string? AskForCustomerEmail()
+    {
+        while (true)
+        {
+            string email = ReadText("What is the customer's email? Leave empty if none: ");
+            if (string.IsNullOrEmpty(email))
+            {
+                return null;
+            }
+            if (email.Length > EmailMaxLength)
+            {
+                Console.WriteLine($"Email can't be longer than {EmailMaxLength} characters.");
+                continue;
+            }
+            return email;
+        }
+    }
+
+    public void ShowDuplicateCustomerMessage()
+    {
+        _lastMessage = "A customer with that phone number or email already exists.";
+    }
+
+    public void ShowCustomerAddedMessage(Customer customer)
+    {
+        _lastMessage = $"{customer.Name} has been registered.";
     }
 }
