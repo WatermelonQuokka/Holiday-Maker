@@ -43,33 +43,26 @@ class ConsoleUI
             _lastMessage = null;
             ShowCustomerList(customers);
             Console.WriteLine($"Enter {GoBackToMenu} to go back to the menu.");
-            Console.Write("Choose a customer: ");
-            string? input = Console.ReadLine();
-            if (input == null)
+            int? choice = ReadNumber("Choose a customer: ");
+            if (choice == GoBackToMenu)
             {
-                throw new EndOfStreamException("The option could not be read.");
+                return null;
             }
-            if (int.TryParse(input, out int number))
+            if (choice <= customers.Count && choice >= FirstPosition)
             {
-                if (number == GoBackToMenu)
-                {
-                    return null;
-                }
-                if (number <= customers.Count && number >= FirstPosition)
-                {
-                    return customers[number - FirstPosition];
-                }
+                return customers[choice.Value - FirstPosition];
             }
             _lastMessage = "Invalid option choice.";
         }
     }
+
 
     public void ShowCurrentCustomer(Customer customer)
     {
         Console.WriteLine($"Current customer: {customer.Name}");
     }
 
-    public void ShowMenu()
+    private void ShowMenu()
     {
         Console.WriteLine(
         """
@@ -77,10 +70,46 @@ class ConsoleUI
         === Holiday Maker ===
         1. Identify customer
         2. Search free rooms with filter
-        3. Show current customers bookings
-        4. Change guest count on customers booking
-        5. Cancel current customers booking
+        3. Show current customer's bookings
+        4. Change guest count on customer's booking
+        5. Cancel current customer's booking
         0. Quit
         """);
+    }
+
+    public MenuChoice AskForMenuChoice()
+    {
+        while (true)
+        {
+            Console.Clear();
+            Console.WriteLine(_lastMessage);
+            _lastMessage = null;
+            ShowMenu();
+            int? choice = ReadNumber("Choose an option: ");
+            if (choice != null
+                && Enum.IsDefined(typeof(MenuChoice), choice.Value))
+            {
+                return (MenuChoice)choice.Value;
+            }
+            _lastMessage = "Invalid option choice.";
+        }
+    }
+
+    private string ReadText(string question)
+    {
+        Console.Write(question);
+        string? input = Console.ReadLine();
+        if (input == null)
+        {
+            throw new EndOfStreamException("The input could not be read.");
+        }
+        return input.Trim();
+    }
+
+    private int? ReadNumber(string question)
+    {
+        return int.TryParse(ReadText(question), out int number)
+        ? number
+        : null;
     }
 }
