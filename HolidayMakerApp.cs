@@ -136,6 +136,8 @@ class HolidayMakerApp
         {
             return;
         }
+        DateOnly checkInDate = _ui.AskForCheckInDate();
+        DateOnly checkOutDate = _ui.AskForCheckOutDate(checkInDate);
         _ui.ShowNotImplementedMessage();
     }
 }

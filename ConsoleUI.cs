@@ -6,6 +6,7 @@ class ConsoleUI
     private const int NameMaxLength = 64;
     private const int PhoneNumberMaxLength = 32;
     private const int EmailMaxLength = 128;
+    private const string DateFormat = "yyyy-MM-dd";
     public void ShowMissingConnectionVariable(string variableName)
     {
         Console.WriteLine($"The environment variable {variableName} is missing or empty.");
@@ -249,6 +250,52 @@ class ConsoleUI
         for (int i = 0; i < cities.Count; i++)
         {
             Console.WriteLine($"{i + FirstPosition}. {cities[i].Name}");
+        }
+    }
+
+    private DateOnly? ReadDate(string question)
+    {
+        return DateOnly.TryParse(ReadText(question), out DateOnly date)
+        ? date
+        : null;
+    }
+
+    public DateOnly AskForCheckInDate()
+    {
+        while (true)
+        {
+            DateOnly dateToday = DateOnly.FromDateTime(DateTime.Today);
+            DateOnly? checkInDate = ReadDate($"Check-in date ({DateFormat}): ");
+            if (checkInDate is null)
+            {
+                Console.WriteLine($"Invalid date, use {DateFormat}");
+                continue;
+            }
+            if (checkInDate.Value < dateToday)
+            {
+                Console.WriteLine($"Check-in date cannot be before {dateToday.ToString(DateFormat)}");
+                continue;
+            }
+            return checkInDate.Value;
+        }
+    }
+
+    public DateOnly AskForCheckOutDate(DateOnly checkInDate)
+    {
+        while (true)
+        {
+            DateOnly? checkOutDate = ReadDate($"Check-out date ({DateFormat}): ");
+            if (checkOutDate is null)
+            {
+                Console.WriteLine($"Invalid date, use {DateFormat}");
+                continue;
+            }
+            if (checkOutDate.Value <= checkInDate)
+            {
+                Console.WriteLine($"Check-out date must be after {checkInDate.ToString(DateFormat)}");
+                continue;
+            }
+            return checkOutDate.Value;
         }
     }
 }
