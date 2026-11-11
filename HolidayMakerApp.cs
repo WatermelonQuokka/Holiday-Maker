@@ -136,8 +136,7 @@ class HolidayMakerApp
         {
             return;
         }
-        DateOnly checkInDate = _ui.AskForCheckInDate();
-        DateOnly checkOutDate = _ui.AskForCheckOutDate(checkInDate);
+        RoomSearch roomSearch = _ui.AskForRoomSearch(chosenCity);
         _ui.ShowNotImplementedMessage();
     }
 }

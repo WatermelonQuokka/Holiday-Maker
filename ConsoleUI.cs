@@ -7,6 +7,7 @@ class ConsoleUI
     private const int PhoneNumberMaxLength = 32;
     private const int EmailMaxLength = 128;
     private const string DateFormat = "yyyy-MM-dd";
+    private const int MinimumGuestCount = 1;
     public void ShowMissingConnectionVariable(string variableName)
     {
         Console.WriteLine($"The environment variable {variableName} is missing or empty.");
@@ -66,7 +67,7 @@ class ConsoleUI
     {
         Console.WriteLine("""
         === Holiday Maker ===
-        
+
         """);
         ShowCurrentCustomer(currentCustomer);
         Console.WriteLine(
@@ -131,6 +132,8 @@ class ConsoleUI
     {
         Console.WriteLine(
         """
+        === Customer Menu ===
+
         1. New customer
         2. Existing customer
         0. Go back to main menu
@@ -260,7 +263,7 @@ class ConsoleUI
         : null;
     }
 
-    public DateOnly AskForCheckInDate()
+    private DateOnly AskForCheckInDate()
     {
         while (true)
         {
@@ -280,7 +283,7 @@ class ConsoleUI
         }
     }
 
-    public DateOnly AskForCheckOutDate(DateOnly checkInDate)
+    private DateOnly AskForCheckOutDate(DateOnly checkInDate)
     {
         while (true)
         {
@@ -297,5 +300,121 @@ class ConsoleUI
             }
             return checkOutDate.Value;
         }
+    }
+
+    private uint AskForGuestCount()
+    {
+        while (true)
+        {
+            int? guestCount = ReadNumber("Guest count: ");
+            if (guestCount is null)
+            {
+                Console.WriteLine("Invalid number.");
+                continue;
+            }
+            if (guestCount.Value < MinimumGuestCount)
+            {
+                Console.WriteLine($"The minimum guest count is {MinimumGuestCount}.");
+                continue;
+            }
+            return (uint)guestCount.Value;
+        }
+    }
+
+    private bool AskYesOrNo(string question)
+    {
+        while (true)
+        {
+            string answer = ReadText($"{question} (y/n): ").ToLower();
+            if (answer == "y" || answer == "yes")
+            {
+                return true;
+            }
+            if (answer == "n" || answer == "no")
+            {
+                return false;
+            }
+            Console.WriteLine("Please answer y or n.");
+        }
+    }
+
+    private bool AskForPoolRequired()
+    {
+        return AskYesOrNo("Pool required");
+    }
+
+    private bool AskForRestaurantRequired()
+    {
+        return AskYesOrNo("Restaurant required");
+    }
+
+    private uint? AskDistance(string question)
+    {
+        while (true)
+        {
+            string distance = ReadText($"{question} in meters (leave empty for no limit): ");
+            if (string.IsNullOrEmpty(distance))
+            {
+                return null;
+            }
+            if (uint.TryParse(distance, out uint result))
+            {
+                return result;
+            }
+            Console.WriteLine("Enter a whole number of meters, or leave empty.");
+        }
+    }
+
+    private uint? AskForMaxDistanceToBeach()
+    {
+        return AskDistance("Max distance to beach");
+    }
+
+    private uint? AskForMaxDistanceToCenter()
+    {
+        return AskDistance("Max distance to center");
+    }
+
+    private RoomSortOrder AskForSortOrder()
+    {
+        while (true)
+        {
+            ShowSortOrders();
+            int? choice = ReadNumber("Choose an option: ");
+            if (choice != null
+                && Enum.IsDefined(typeof(RoomSortOrder), choice.Value))
+            {
+                return (RoomSortOrder)choice.Value;
+            }
+            Console.WriteLine("Invalid option choice.");
+        }
+    }
+
+    private void ShowSortOrders()
+    {
+        Console.WriteLine(
+            """
+            === Sort Orders ===
+            1. Lowest Price
+            2. Highest Rating
+            """);
+    }
+
+    public RoomSearch AskForRoomSearch(City city)
+    {
+        Console.Clear();
+        Console.WriteLine($"Searching in {city.Name}");
+        DateOnly checkInDate = AskForCheckInDate();
+        return new RoomSearch(
+            city.Id,
+            checkInDate,
+            AskForCheckOutDate(checkInDate),
+            AskForGuestCount(),
+            AskForPoolRequired(),
+            AskForRestaurantRequired(),
+            AskForMaxDistanceToBeach(),
+            AskForMaxDistanceToCenter(),
+            AskForSortOrder()
+        );
     }
 }
