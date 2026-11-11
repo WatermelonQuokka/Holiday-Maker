@@ -10,27 +10,20 @@ class ConsoleUI
 
     public void ShowAccessDeniedMessage()
     {
-        Console.WriteLine("The connection string contains the wrong username or password.");
+        _lastMessage = "The connection string contains the wrong username or password.";
     }
 
     public void ShowDatabaseErrorMessage()
     {
-        Console.WriteLine("There seems to be a problem with the database right now, try again in a minute.");
+        _lastMessage = "There seems to be a problem with the database right now, try again in a minute.";
     }
 
-    public void ShowCustomerList(List<Customer> customers)
+    private void ShowCustomerList(List<Customer> customers)
     {
-        if (customers.Count == 0)
+        Console.WriteLine("=== Customer List ===");
+        for (int i = 0; i < customers.Count; i++)
         {
-            Console.WriteLine("No customers found.");
-        }
-        else
-        {
-            Console.WriteLine("=== Customer List ===");
-            for (int i = 0; i < customers.Count; i++)
-            {
-                Console.WriteLine($"{i + 1}. {customers[i].Name}, {customers[i].PhoneNumber}");
-            }
+            Console.WriteLine($"{i + FirstPosition}. {customers[i].Name}, {customers[i].PhoneNumber}");
         }
     }
 
@@ -48,7 +41,8 @@ class ConsoleUI
             {
                 return null;
             }
-            if (choice <= customers.Count && choice >= FirstPosition)
+            if (choice <= customers.Count
+                && choice >= FirstPosition)
             {
                 return customers[choice.Value - FirstPosition];
             }
@@ -57,17 +51,23 @@ class ConsoleUI
     }
 
 
-    public void ShowCurrentCustomer(Customer customer)
+    private void ShowCurrentCustomer(Customer? customer)
     {
-        Console.WriteLine($"Current customer: {customer.Name}");
+        Console.WriteLine(customer == null
+        ? "No customer chosen."
+        : $"Current customer: {customer.Name}");
     }
 
-    private void ShowMenu()
+    private void ShowMenu(Customer? currentCustomer)
     {
+        Console.WriteLine("""
+        === Holiday Maker ===
+        
+        """);
+        ShowCurrentCustomer(currentCustomer);
         Console.WriteLine(
         """
 
-        === Holiday Maker ===
         1. Identify customer
         2. Search free rooms with filter
         3. Show current customer's bookings
@@ -77,14 +77,14 @@ class ConsoleUI
         """);
     }
 
-    public MenuChoice AskForMenuChoice()
+    public MenuChoice AskForMenuChoice(Customer? currentCustomer)
     {
         while (true)
         {
             Console.Clear();
             Console.WriteLine(_lastMessage);
             _lastMessage = null;
-            ShowMenu();
+            ShowMenu(currentCustomer);
             int? choice = ReadNumber("Choose an option: ");
             if (choice != null
                 && Enum.IsDefined(typeof(MenuChoice), choice.Value))
@@ -111,5 +111,15 @@ class ConsoleUI
         return int.TryParse(ReadText(question), out int number)
         ? number
         : null;
+    }
+
+    public void ShowNotImplementedMessage()
+    {
+        _lastMessage = "Not implemented yet";
+    }
+
+    public void ShowEmptyCustomerListMessage()
+    {
+        _lastMessage = "No customers found.";
     }
 }
