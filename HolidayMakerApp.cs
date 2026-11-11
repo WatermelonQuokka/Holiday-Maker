@@ -24,19 +24,7 @@ class HolidayMakerApp
                 {
                     case MenuChoice.IdentifyCustomer:
                         {
-                            List<Customer> customers = await _repository.GetCustomersAsync();
-                            if (customers.Count != 0)
-                            {
-                                Customer? chosenCustomer = _ui.AskForCustomerChoice(customers);
-                                if (chosenCustomer != null)
-                                {
-                                    _currentCustomer = chosenCustomer;
-                                }
-                            }
-                            else
-                            {
-                                _ui.ShowEmptyCustomerListMessage();
-                            }
+                            await IdentifyCustomerAsync();
                             break;
                         }
                     case MenuChoice.SearchFreeRooms:
@@ -77,6 +65,23 @@ class HolidayMakerApp
             {
                 _ui.ShowDatabaseErrorMessage();
             }
+        }
+    }
+
+    private async Task IdentifyCustomerAsync()
+    {
+        List<Customer> customers = await _repository.GetCustomersAsync();
+
+        if (customers.Count == 0)
+        {
+            _ui.ShowEmptyCustomerListMessage();
+            return;
+        }
+        
+        Customer? chosenCustomer = _ui.AskForCustomerChoice(customers);
+        if (chosenCustomer != null)
+        {
+            _currentCustomer = chosenCustomer;
         }
     }
 }
