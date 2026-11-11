@@ -60,4 +60,29 @@ class HolidayMakerRepository
 
         return new Customer(customerId, name, phoneNumber);
     }
+
+    public async Task<List<City>> GetCitiesAsync()
+    {
+        List<City> cities = new();
+
+        await using MySqlConnection connection = await OpenConnectionAsync();
+
+        await using MySqlCommand cityListCommand = new
+        ("""
+        SELECT cities.id, cities.name
+        FROM cities
+        ORDER BY cities.name;
+        """, connection);
+
+        await using MySqlDataReader cityListReader = await cityListCommand.ExecuteReaderAsync();
+
+        while (await cityListReader.ReadAsync())
+        {
+            City city = new(
+                cityListReader.GetUInt32("id"),
+                cityListReader.GetString("name"));
+            cities.Add(city);
+        }
+        return cities;
+    }
 }

@@ -30,7 +30,7 @@ class HolidayMakerApp
                         }
                     case MenuChoice.SearchFreeRooms:
                         {
-                            _ui.ShowNotImplementedMessage();
+                            await SearchFreeRoomsAsync();
                             break;
                         }
                     case MenuChoice.ShowCustomerBookings:
@@ -126,5 +126,16 @@ class HolidayMakerApp
         {
             _ui.ShowDuplicateCustomerMessage();
         }
+    }
+
+    private async Task SearchFreeRoomsAsync()
+    {
+        List<City> cities = await _repository.GetCitiesAsync();
+        City? chosenCity = _ui.AskForCityChoice(cities);
+        if (chosenCity is null)
+        {
+            return;
+        }
+        _ui.ShowNotImplementedMessage();
     }
 }

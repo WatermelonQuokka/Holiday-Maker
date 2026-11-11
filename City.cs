@@ -1,0 +1,1 @@
+record City(uint Id, string Name);

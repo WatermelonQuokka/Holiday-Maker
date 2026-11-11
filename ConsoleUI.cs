@@ -219,4 +219,36 @@ class ConsoleUI
     {
         _lastMessage = $"{customer.Name} has been registered.";
     }
+
+    public City? AskForCityChoice(List<City> cities)
+    {
+        while (true)
+        {
+            Console.Clear();
+            Console.WriteLine(_lastMessage);
+            _lastMessage = null;
+            ShowCityList(cities);
+            Console.WriteLine($"Enter {GoBackToMenu} to go back to the menu.");
+            int? choice = ReadNumber("Choose a city: ");
+            if (choice == GoBackToMenu)
+            {
+                return null;
+            }
+            if (choice <= cities.Count
+                && choice >= FirstPosition)
+            {
+                return cities[choice.Value - FirstPosition];
+            }
+            _lastMessage = "Invalid option choice.";
+        }
+    }
+
+    private void ShowCityList(List<City> cities)
+    {
+        Console.WriteLine("=== City List ===");
+        for (int i = 0; i < cities.Count; i++)
+        {
+            Console.WriteLine($"{i + FirstPosition}. {cities[i].Name}");
+        }
+    }
 }
