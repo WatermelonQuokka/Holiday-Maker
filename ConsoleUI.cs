@@ -68,4 +68,19 @@ class ConsoleUI
     {
         Console.WriteLine($"Current customer: {customer.Name}");
     }
+
+    public void ShowMenu()
+    {
+        Console.WriteLine(
+        """
+
+        === Holiday Maker ===
+        1. Identify customer
+        2. Search free rooms with filter
+        3. Show current customers bookings
+        4. Change guest count on customers booking
+        5. Cancel current customers booking
+        0. Quit
+        """);
+    }
 }
