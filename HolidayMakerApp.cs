@@ -137,6 +137,12 @@ class HolidayMakerApp
             return;
         }
         RoomSearch roomSearch = _ui.AskForRoomSearch(chosenCity);
+        List<AvailableRoom> availableRooms = await _repository.SearchAvailableRoomsAsync(roomSearch);
+        if (availableRooms.Count == 0)
+        {
+            _ui.ShowNoAvailableRoomsMessage();
+            return;
+        }
         _ui.ShowNotImplementedMessage();
     }
 }

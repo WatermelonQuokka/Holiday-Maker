@@ -417,4 +417,9 @@ class ConsoleUI
             AskForSortOrder()
         );
     }
+
+    public void ShowNoAvailableRoomsMessage()
+    {
+        _lastMessage = "There is no available room. Try other dates, fewer guests or fewer filters.";
+    }
 }
