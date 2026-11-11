@@ -74,7 +74,7 @@ class ConsoleUI
         """
 
         1. Identify customer
-        2. Search free rooms with filter
+        2. Search available rooms with filter
         3. Show current customer's bookings
         4. Change guest count on customer's booking
         5. Cancel current customer's booking

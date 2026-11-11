@@ -28,9 +28,9 @@ class HolidayMakerApp
                             await IdentifyCustomerAsync();
                             break;
                         }
-                    case MenuChoice.SearchFreeRooms:
+                    case MenuChoice.SearchAvailableRooms:
                         {
-                            await SearchFreeRoomsAsync();
+                            await SearchAvailableRoomsAsync();
                             break;
                         }
                     case MenuChoice.ShowCustomerBookings:
@@ -128,7 +128,7 @@ class HolidayMakerApp
         }
     }
 
-    private async Task SearchFreeRoomsAsync()
+    private async Task SearchAvailableRoomsAsync()
     {
         List<City> cities = await _repository.GetCitiesAsync();
         City? chosenCity = _ui.AskForCityChoice(cities);
