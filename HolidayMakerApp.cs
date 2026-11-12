@@ -1,4 +1,3 @@
-using System.Collections;
 using MySqlConnector;
 class HolidayMakerApp
 {
@@ -157,6 +156,12 @@ class HolidayMakerApp
                 return;
             }
         }
-        _ui.ShowNotImplementedMessage();
+        BookingConfirmation? confirmation = await _repository.BookRoomAsync(_currentCustomer.Id, chosenRoom.RoomId, roomSearch.CheckIn, roomSearch.CheckOut, roomSearch.Guests);
+        if (confirmation is null)
+        {
+            _ui.ShowAlreadyBookedRoomMessage();
+            return;
+        }
+        _ui.ShowBookingConfirmation(confirmation, chosenRoom, roomSearch);
     }
 }

@@ -460,4 +460,14 @@ class ConsoleUI
     {
         _lastMessage = "Choose a customer to book this room.";
     }
+
+    public void ShowAlreadyBookedRoomMessage()
+    {
+        _lastMessage = "The room was just booked by someone else. Please search again.";
+    }
+
+    public void ShowBookingConfirmation(BookingConfirmation confirmation, AvailableRoom chosenRoom, RoomSearch roomSearch)
+    {
+        _lastMessage = $"The room was successfully booked!\n{chosenRoom.AccommodationName} - {chosenRoom.RoomName} during {roomSearch.CheckIn.ToString(DateFormat)} - {roomSearch.CheckOut.ToString(DateFormat)}\nBooking number: {confirmation.BookingId} | Total nights: {confirmation.Nights} | Total price: {confirmation.TotalPrice} kr";
+    }
 }

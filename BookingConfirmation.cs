@@ -1,0 +1,1 @@
+record BookingConfirmation(uint BookingId, int Nights, uint TotalPrice);

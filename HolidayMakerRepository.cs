@@ -156,4 +156,64 @@ class HolidayMakerRepository
         }
         return availableRooms;
     }
+
+    public async Task<BookingConfirmation?> BookRoomAsync(uint customerId, uint roomId, DateOnly checkIn, DateOnly checkOut, uint guests)
+    {
+        await using MySqlConnection connection = await OpenConnectionAsync();
+
+        await using MySqlCommand availabilityCheckCommand = new(
+        """
+        SELECT COUNT(*)
+        FROM bookings
+        WHERE bookings.room_id = @room_id
+            AND @check_in < booking_end
+            AND @check_out > booking_start;
+        """, connection);
+
+        availabilityCheckCommand.Parameters.AddWithValue("@room_id", roomId);
+        availabilityCheckCommand.Parameters.AddWithValue("@check_in", checkIn);
+        availabilityCheckCommand.Parameters.AddWithValue("@check_out", checkOut);
+
+        long conflictCount = Convert.ToInt64(await availabilityCheckCommand.ExecuteScalarAsync());
+
+        if (conflictCount > 0)
+        {
+            return null;
+        }
+
+        await using MySqlCommand bookRoomCommand = new(
+        """
+        INSERT INTO bookings (customer_id, room_id, booking_start, booking_end, guest_count)
+        VALUES (@customer_id, @room_id, @check_in, @check_out, @guests);
+        """, connection);
+
+        bookRoomCommand.Parameters.AddWithValue("@customer_id", customerId);
+        bookRoomCommand.Parameters.AddWithValue("@room_id", roomId);
+        bookRoomCommand.Parameters.AddWithValue("@check_in", checkIn);
+        bookRoomCommand.Parameters.AddWithValue("@check_out", checkOut);
+        bookRoomCommand.Parameters.AddWithValue("@guests", guests);
+
+        await bookRoomCommand.ExecuteNonQueryAsync();
+
+        uint bookingId = (uint)bookRoomCommand.LastInsertedId;
+
+        await using MySqlCommand totalPriceCommand = new(
+        """
+        SELECT DATEDIFF(bookings.booking_end, bookings.booking_start) AS total_nights,
+        (DATEDIFF(bookings.booking_end, bookings.booking_start)* rooms.price_per_night) AS total_price
+        FROM bookings
+        JOIN rooms ON bookings.room_id = rooms.id
+        WHERE bookings.id = @booking_id;
+        """, connection);
+
+        totalPriceCommand.Parameters.AddWithValue("@booking_id", bookingId);
+
+        await using MySqlDataReader totalPriceReader = await totalPriceCommand.ExecuteReaderAsync();
+
+        await totalPriceReader.ReadAsync();
+        return new BookingConfirmation(
+            bookingId,
+            totalPriceReader.GetInt32("total_nights"),
+            totalPriceReader.GetUInt32("total_price"));
+    }
 }
