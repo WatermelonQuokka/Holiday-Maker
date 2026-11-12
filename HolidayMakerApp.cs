@@ -143,6 +143,11 @@ class HolidayMakerApp
             _ui.ShowNoAvailableRoomsMessage();
             return;
         }
+        AvailableRoom? chosenRoom = _ui.AskForAvailableRoomChoice(availableRooms);
+        if (chosenRoom is null)
+        {
+            return;
+        }
         _ui.ShowNotImplementedMessage();
     }
 }

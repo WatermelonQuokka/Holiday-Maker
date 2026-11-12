@@ -422,4 +422,37 @@ class ConsoleUI
     {
         _lastMessage = "There is no available room. Try other dates, fewer guests or fewer filters.";
     }
+
+    public AvailableRoom? AskForAvailableRoomChoice(List<AvailableRoom> availableRooms)
+    {
+        while (true)
+        {
+            Console.Clear();
+            Console.WriteLine(_lastMessage);
+            _lastMessage = null;
+            ShowAvailableRoomList(availableRooms);
+            Console.WriteLine($"Enter {GoBackToMenu} to go back to the menu.");
+            int? choice = ReadNumber("Choose a room: ");
+            if (choice == GoBackToMenu)
+            {
+                return null;
+            }
+            if (choice <= availableRooms.Count
+                && choice >= FirstPosition)
+            {
+                return availableRooms[choice.Value - FirstPosition];
+            }
+            _lastMessage = "Invalid option choice.";
+        }
+    }
+
+    private void ShowAvailableRoomList(List<AvailableRoom> availableRooms)
+    {
+        Console.WriteLine($"=== Available rooms in {availableRooms[0].CityName} ===");
+        for (int i = 0; i < availableRooms.Count; i++)
+        {
+            Console.WriteLine($"{i + FirstPosition}. {availableRooms[i].AccommodationName} - {availableRooms[i].RoomName}");
+            Console.WriteLine($"   Up to {availableRooms[i].GuestCapacity} guests | {availableRooms[i].PricePerNight} kr/night | Rating {availableRooms[i].Rating}/5 | Beach {availableRooms[i].DistanceToBeach} m | Center {availableRooms[i].DistanceToCenter} m");
+        }
+    }
 }
