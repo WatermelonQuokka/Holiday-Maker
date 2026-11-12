@@ -455,4 +455,9 @@ class ConsoleUI
             Console.WriteLine($"   Up to {availableRooms[i].GuestCapacity} guests | {availableRooms[i].PricePerNight} kr/night | Rating {availableRooms[i].Rating}/5 | Beach {availableRooms[i].DistanceToBeach} m | Center {availableRooms[i].DistanceToCenter} m");
         }
     }
+
+    public void ShowMissingCustomerMessage()
+    {
+        _lastMessage = "Choose a customer to book this room.";
+    }
 }

@@ -148,6 +148,15 @@ class HolidayMakerApp
         {
             return;
         }
+        if (_currentCustomer is null)
+        {
+            _ui.ShowMissingCustomerMessage();
+            await IdentifyCustomerAsync();
+            if (_currentCustomer is null)
+            {
+                return;
+            }
+        }
         _ui.ShowNotImplementedMessage();
     }
 }
