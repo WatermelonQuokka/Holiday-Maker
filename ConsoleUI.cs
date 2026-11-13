@@ -37,9 +37,7 @@ class ConsoleUI
     {
         while (true)
         {
-            Console.Clear();
-            Console.WriteLine(_lastMessage);
-            _lastMessage = null;
+            StartNewScreen();
             ShowCustomerList(customers);
             Console.WriteLine($"Enter {GoBackToMenu} to go back to the menu.");
             int? choice = ReadNumber("Choose a customer: ");
@@ -87,9 +85,7 @@ class ConsoleUI
     {
         while (true)
         {
-            Console.Clear();
-            Console.WriteLine(_lastMessage);
-            _lastMessage = null;
+            StartNewScreen();
             ShowMenu(currentCustomer);
             int? choice = ReadNumber("Choose an option: ");
             if (choice != null
@@ -118,7 +114,7 @@ class ConsoleUI
         ? number
         : null;
     }
-    
+
     public void ShowEmptyCustomerListMessage()
     {
         _lastMessage = "No customers found.";
@@ -140,9 +136,7 @@ class ConsoleUI
     {
         while (true)
         {
-            Console.Clear();
-            Console.WriteLine(_lastMessage);
-            _lastMessage = null;
+            StartNewScreen();
             ShowCustomerMenu();
             int? choice = ReadNumber("Choose an option: ");
             if (choice != null
@@ -224,9 +218,7 @@ class ConsoleUI
     {
         while (true)
         {
-            Console.Clear();
-            Console.WriteLine(_lastMessage);
-            _lastMessage = null;
+            StartNewScreen();
             ShowCityList(cities);
             Console.WriteLine($"Enter {GoBackToMenu} to go back to the menu.");
             int? choice = ReadNumber("Choose a city: ");
@@ -398,7 +390,7 @@ class ConsoleUI
 
     public RoomSearch AskForRoomSearch(City city)
     {
-        Console.Clear();
+        StartNewScreen();
         Console.WriteLine($"Searching in {city.Name}");
         DateOnly checkInDate = AskForCheckInDate();
         return new RoomSearch(
@@ -423,9 +415,7 @@ class ConsoleUI
     {
         while (true)
         {
-            Console.Clear();
-            Console.WriteLine(_lastMessage);
-            _lastMessage = null;
+            StartNewScreen();
             ShowAvailableRoomList(availableRooms);
             Console.WriteLine($"Enter {GoBackToMenu} to go back to the menu.");
             int? choice = ReadNumber("Choose a room: ");
@@ -484,7 +474,7 @@ class ConsoleUI
 
     public void ShowCustomerBookings(List<Booking> bookings, Customer customer)
     {
-        Console.Clear();
+        StartNewScreen();
         ShowBookingList(bookings, customer);
         PauseBeforeMenu();
     }
@@ -499,9 +489,7 @@ class ConsoleUI
     {
         while (true)
         {
-            Console.Clear();
-            Console.WriteLine(_lastMessage);
-            _lastMessage = null;
+            StartNewScreen();
             ShowBookingList(bookings, customer);
             Console.WriteLine($"Enter {GoBackToMenu} to go back to the menu.");
             int? choice = ReadNumber("Choose a booking: ");
@@ -568,5 +556,12 @@ class ConsoleUI
     public void ShowCancelBookingErrorMessage()
     {
         _lastMessage = "The booking could not be cancelled. The booking may have been cancelled already. Please check the customer's bookings and try again.";
+    }
+
+    private void StartNewScreen()
+    {
+        Console.Clear();
+        Console.WriteLine(_lastMessage);
+        _lastMessage = null;
     }
 }
