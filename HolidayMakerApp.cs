@@ -1,4 +1,5 @@
 using MySqlConnector;
+
 class HolidayMakerApp
 {
     private readonly ConsoleUI _ui;
@@ -152,7 +153,12 @@ class HolidayMakerApp
         {
             return;
         }
-        BookingConfirmation? confirmation = await _repository.BookRoomAsync(customer.Id, chosenRoom.RoomId, roomSearch.CheckIn, roomSearch.CheckOut, roomSearch.Guests);
+        BookingConfirmation? confirmation = await _repository.BookRoomAsync(
+            customer.Id,
+            chosenRoom.RoomId,
+            roomSearch.CheckIn,
+            roomSearch.CheckOut,
+            roomSearch.Guests);
         if (confirmation is null)
         {
             _ui.ShowAlreadyBookedRoomMessage();

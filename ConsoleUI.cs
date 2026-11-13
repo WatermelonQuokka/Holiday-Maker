@@ -54,12 +54,11 @@ class ConsoleUI
         }
     }
 
-
     private void ShowCurrentCustomer(Customer? customer)
     {
         Console.WriteLine(customer is null
-        ? "No customer chosen."
-        : $"Current customer: {customer.Name}");
+            ? "No customer chosen."
+            : $"Current customer: {customer.Name}");
     }
 
     private void ShowMenu(Customer? currentCustomer)
@@ -111,8 +110,8 @@ class ConsoleUI
     private int? ReadNumber(string question)
     {
         return int.TryParse(ReadText(question), out int number)
-        ? number
-        : null;
+            ? number
+            : null;
     }
 
     public void ShowEmptyCustomerListMessage()
@@ -219,8 +218,8 @@ class ConsoleUI
     private DateOnly? ReadDate(string question)
     {
         return DateOnly.TryParse(ReadText(question), out DateOnly date)
-        ? date
-        : null;
+            ? date
+            : null;
     }
 
     private DateOnly AskForCheckInDate()
@@ -409,8 +408,16 @@ class ConsoleUI
         Console.WriteLine($"=== Available rooms in {availableRooms[0].CityName} ===");
         for (int i = 0; i < availableRooms.Count; i++)
         {
-            Console.WriteLine($"{i + FirstPosition}. {availableRooms[i].AccommodationName} - Room {availableRooms[i].RoomName}");
-            Console.WriteLine($"   Up to {availableRooms[i].GuestCapacity} guests | {availableRooms[i].PricePerNight} kr/night | Rating {availableRooms[i].Rating}/5 | Beach {availableRooms[i].DistanceToBeach} m | Center {availableRooms[i].DistanceToCenter} m");
+            AvailableRoom room = availableRooms[i];
+            Console.WriteLine(
+                $"{i + FirstPosition}. {room.AccommodationName} - " +
+                $"Room {room.RoomName}");
+            Console.WriteLine(
+                $"   Up to {room.GuestCapacity} guests | " +
+                $"{room.PricePerNight} kr/night | " +
+                $"Rating {room.Rating}/5 | " +
+                $"Beach {room.DistanceToBeach} m | " +
+                $"Center {room.DistanceToCenter} m");
         }
     }
 
@@ -426,12 +433,17 @@ class ConsoleUI
 
     public void ShowBookingConfirmation(BookingConfirmation confirmation, AvailableRoom chosenRoom, RoomSearch roomSearch)
     {
-        _lastMessage = $"The room was successfully booked!\n{chosenRoom.AccommodationName} - Room {chosenRoom.RoomName} during {roomSearch.CheckIn.ToString(DateFormat)} - {roomSearch.CheckOut.ToString(DateFormat)}\nBooking number: {confirmation.BookingId} | Total nights: {confirmation.Nights} | Total price: {confirmation.TotalPrice} kr";
+        _lastMessage =
+            $"The room was successfully booked!\n" +
+            $"{chosenRoom.AccommodationName} - Room {chosenRoom.RoomName} " +
+            $"during {roomSearch.CheckIn.ToString(DateFormat)} - {roomSearch.CheckOut.ToString(DateFormat)}\n" +
+            $"Booking number: {confirmation.BookingId} | Total nights: {confirmation.Nights} | " +
+            $"Total price: {confirmation.TotalPrice} kr";
     }
 
     public void ShowNoBookingsMessage()
     {
-        _lastMessage = "There is no bookings for this customer.";
+        _lastMessage = "There are no bookings for this customer.";
     }
 
     private void ShowBookingList(List<Booking> bookings, Customer customer)
@@ -495,14 +507,15 @@ class ConsoleUI
     public void ShowChangeGuestConfirmationMessage(Booking booking, uint newGuestCount)
     {
         string guestWord = newGuestCount == 1
-        ? "guest"
-        : "guests";
+            ? "guest"
+            : "guests";
         _lastMessage = $"Booking number {booking.BookingId} now has {newGuestCount} {guestWord}.";
     }
 
     public void ShowChangeGuestErrorMessage()
     {
-        _lastMessage = "The guest count could not be changed. The booking may have been cancelled. Please check the customer's bookings and try again.";
+        _lastMessage =
+            "The guest count could not be changed. The booking may have been cancelled. Please check the customer's bookings and try again.";
     }
 
     public bool ConfirmCancelBooking(Booking booking)
@@ -516,8 +529,12 @@ class ConsoleUI
         string nightWord = booking.Nights == 1
             ? "night"
             : "nights";
-        Console.WriteLine($"Booking number: {booking.BookingId} | {booking.AccommodationName} - Room {booking.RoomName}");
-        Console.WriteLine($"   Dates: {booking.CheckIn.ToString(DateFormat)} - {booking.CheckOut.ToString(DateFormat)} ({booking.Nights} {nightWord}) | Guests: {booking.GuestCount} (max {booking.GuestCapacity}) | Total price: {booking.TotalPrice} kr");
+        Console.WriteLine(
+            $"Booking number: {booking.BookingId} | {booking.AccommodationName} - Room {booking.RoomName}");
+        Console.WriteLine(
+            $"   Dates: {booking.CheckIn.ToString(DateFormat)} - {booking.CheckOut.ToString(DateFormat)} " +
+            $"({booking.Nights} {nightWord}) | Guests: {booking.GuestCount} (max {booking.GuestCapacity}) | " +
+            $"Total price: {booking.TotalPrice} kr");
     }
 
     public void ShowCancelBookingConfirmationMessage(Booking booking)
@@ -527,7 +544,8 @@ class ConsoleUI
 
     public void ShowCancelBookingErrorMessage()
     {
-        _lastMessage = "The booking could not be cancelled. The booking may have been cancelled already. Please check the customer's bookings and try again.";
+        _lastMessage = 
+            "The booking could not be cancelled. The booking may have been cancelled already. Please check the customer's bookings and try again.";
     }
 
     private void StartNewScreen()
