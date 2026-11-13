@@ -502,4 +502,54 @@ class ConsoleUI
         Console.WriteLine("Press any key to return to the menu.");
         Console.ReadKey(true);
     }
+
+    public Booking? AskForBookingChoice(List<Booking> bookings, Customer customer)
+    {
+        while (true)
+        {
+            Console.Clear();
+            Console.WriteLine(_lastMessage);
+            _lastMessage = null;
+            ShowBookingList(bookings, customer);
+            Console.WriteLine($"Enter {GoBackToMenu} to go back to the menu.");
+            int? choice = ReadNumber("Choose a booking: ");
+            if (choice == GoBackToMenu)
+            {
+                return null;
+            }
+            if (choice <= bookings.Count
+                && choice >= FirstPosition)
+            {
+                return bookings[choice.Value - FirstPosition];
+            }
+            _lastMessage = "Invalid option choice.";
+        }
+    }
+
+    public uint AskForNewGuestCount(Booking booking)
+    {
+        Console.WriteLine($"Current guests: {booking.GuestCount} (max {booking.GuestCapacity})");
+        while (true)
+        {
+            uint count = AskForGuestCount();
+            if (count <= booking.GuestCapacity)
+            {
+                return count;
+            }
+            Console.WriteLine($"Room {booking.RoomName} fits at most {booking.GuestCapacity} guests.");
+        }
+    }
+
+    public void ShowChangeGuestConfirmationMessage(Booking booking, uint newGuestCount)
+    {
+        string guestWord = newGuestCount == 1
+        ? "guest"
+        : "guests";
+        _lastMessage = $"Booking number {booking.BookingId} now has {newGuestCount} {guestWord}.";
+    }
+
+    public void ShowChangeGuestErrorMessage()
+    {
+        _lastMessage = "The guest count could not be changed. The booking may have been cancelled. Please check the customer's bookings and try again.";
+    }
 }

@@ -261,4 +261,24 @@ class HolidayMakerRepository
         }
         return bookings;
     }
+
+    public async Task<bool> ChangeBookingGuestCountAsync(uint bookingId, uint guestCount)
+    {
+        await using MySqlConnection connection = await OpenConnectionAsync();
+
+        await using MySqlCommand changeBookingCommand = new
+        ("""
+        UPDATE bookings
+        JOIN rooms ON bookings.room_id = rooms.id
+        SET bookings.guest_count = @guests
+        WHERE bookings.id = @booking_id
+        AND rooms.max_capacity >= @guests;
+        """, connection);
+
+        changeBookingCommand.Parameters.AddWithValue("@guests", guestCount);
+        changeBookingCommand.Parameters.AddWithValue("@booking_id", bookingId);
+
+        int changedRows = await changeBookingCommand.ExecuteNonQueryAsync();
+        return changedRows == 1;
+    }
 }

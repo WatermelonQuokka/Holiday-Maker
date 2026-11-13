@@ -39,7 +39,7 @@ class HolidayMakerApp
                         }
                     case MenuChoice.ChangeGuestCount:
                         {
-                            _ui.ShowNotImplementedMessage();
+                            await ChangeGuestCountAsync();
                             break;
                         }
                     case MenuChoice.CancelBooking:
@@ -185,5 +185,33 @@ class HolidayMakerApp
             await IdentifyCustomerAsync();
         }
         return _currentCustomer;
+    }
+
+    private async Task ChangeGuestCountAsync()
+    {
+        Customer? customer = await RequireCustomerAsync();
+        if (customer is null)
+        {
+            return;
+        }
+        List<Booking> bookings = await _repository.GetCustomerBookingsAsync(customer.Id);
+        if (bookings.Count == 0)
+        {
+            _ui.ShowNoBookingsMessage();
+            return;
+        }
+        Booking? chosenBooking = _ui.AskForBookingChoice(bookings, customer);
+        if (chosenBooking is null)
+        {
+            return;
+        }
+        uint newGuestCount = _ui.AskForNewGuestCount(chosenBooking);
+        bool changed = await _repository.ChangeBookingGuestCountAsync(chosenBooking.BookingId, newGuestCount);
+        if (!changed)
+        {
+            _ui.ShowChangeGuestErrorMessage();
+            return;
+        }
+        _ui.ShowChangeGuestConfirmationMessage(chosenBooking, newGuestCount);
     }
 }
