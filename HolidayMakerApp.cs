@@ -34,7 +34,7 @@ class HolidayMakerApp
                         }
                     case MenuChoice.ShowCustomerBookings:
                         {
-                            _ui.ShowNotImplementedMessage();
+                            await ShowCustomerBookingsAsync();
                             break;
                         }
                     case MenuChoice.ChangeGuestCount:
@@ -147,21 +147,43 @@ class HolidayMakerApp
         {
             return;
         }
-        if (_currentCustomer is null)
+        Customer? customer = await RequireCustomerAsync();
+        if (customer is null)
         {
-            _ui.ShowMissingCustomerMessage();
-            await IdentifyCustomerAsync();
-            if (_currentCustomer is null)
-            {
-                return;
-            }
+            return;
         }
-        BookingConfirmation? confirmation = await _repository.BookRoomAsync(_currentCustomer.Id, chosenRoom.RoomId, roomSearch.CheckIn, roomSearch.CheckOut, roomSearch.Guests);
+        BookingConfirmation? confirmation = await _repository.BookRoomAsync(customer.Id, chosenRoom.RoomId, roomSearch.CheckIn, roomSearch.CheckOut, roomSearch.Guests);
         if (confirmation is null)
         {
             _ui.ShowAlreadyBookedRoomMessage();
             return;
         }
         _ui.ShowBookingConfirmation(confirmation, chosenRoom, roomSearch);
+    }
+
+    private async Task ShowCustomerBookingsAsync()
+    {
+        Customer? customer = await RequireCustomerAsync();
+        if (customer is null)
+        {
+            return;
+        }
+        List<Booking> bookings = await _repository.GetCustomerBookingsAsync(customer.Id);
+        if (bookings.Count == 0)
+        {
+            _ui.ShowNoBookingsMessage();
+            return;
+        }
+        _ui.ShowCustomerBookings(bookings, customer);
+    }
+
+    private async Task<Customer?> RequireCustomerAsync()
+    {
+        if (_currentCustomer is null)
+        {
+            _ui.ShowMissingCustomerMessage();
+            await IdentifyCustomerAsync();
+        }
+        return _currentCustomer;
     }
 }

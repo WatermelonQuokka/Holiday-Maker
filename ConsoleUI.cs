@@ -8,6 +8,7 @@ class ConsoleUI
     private const int EmailMaxLength = 128;
     private const string DateFormat = "yyyy-MM-dd";
     private const int MinimumGuestCount = 1;
+
     public void ShowMissingConnectionVariable(string variableName)
     {
         Console.WriteLine($"The environment variable {variableName} is missing or empty.");
@@ -451,14 +452,14 @@ class ConsoleUI
         Console.WriteLine($"=== Available rooms in {availableRooms[0].CityName} ===");
         for (int i = 0; i < availableRooms.Count; i++)
         {
-            Console.WriteLine($"{i + FirstPosition}. {availableRooms[i].AccommodationName} - {availableRooms[i].RoomName}");
+            Console.WriteLine($"{i + FirstPosition}. {availableRooms[i].AccommodationName} - Room {availableRooms[i].RoomName}");
             Console.WriteLine($"   Up to {availableRooms[i].GuestCapacity} guests | {availableRooms[i].PricePerNight} kr/night | Rating {availableRooms[i].Rating}/5 | Beach {availableRooms[i].DistanceToBeach} m | Center {availableRooms[i].DistanceToCenter} m");
         }
     }
 
     public void ShowMissingCustomerMessage()
     {
-        _lastMessage = "Choose a customer to book this room.";
+        _lastMessage = "Choose a customer for this action.";
     }
 
     public void ShowAlreadyBookedRoomMessage()
@@ -468,6 +469,37 @@ class ConsoleUI
 
     public void ShowBookingConfirmation(BookingConfirmation confirmation, AvailableRoom chosenRoom, RoomSearch roomSearch)
     {
-        _lastMessage = $"The room was successfully booked!\n{chosenRoom.AccommodationName} - {chosenRoom.RoomName} during {roomSearch.CheckIn.ToString(DateFormat)} - {roomSearch.CheckOut.ToString(DateFormat)}\nBooking number: {confirmation.BookingId} | Total nights: {confirmation.Nights} | Total price: {confirmation.TotalPrice} kr";
+        _lastMessage = $"The room was successfully booked!\n{chosenRoom.AccommodationName} - Room {chosenRoom.RoomName} during {roomSearch.CheckIn.ToString(DateFormat)} - {roomSearch.CheckOut.ToString(DateFormat)}\nBooking number: {confirmation.BookingId} | Total nights: {confirmation.Nights} | Total price: {confirmation.TotalPrice} kr";
+    }
+
+    public void ShowNoBookingsMessage()
+    {
+        _lastMessage = "There is no bookings for this customer.";
+    }
+
+    private void ShowBookingList(List<Booking> bookings, Customer customer)
+    {
+        Console.WriteLine($"=== Current bookings for {customer.Name} ===");
+        for (int i = 0; i < bookings.Count; i++)
+        {
+            string nightWord = bookings[i].Nights == 1
+                ? "night"
+                : "nights";
+            Console.WriteLine($"{i + FirstPosition}. Booking number: {bookings[i].BookingId} | {bookings[i].AccommodationName} - Room {bookings[i].RoomName}");
+            Console.WriteLine($"   Dates: {bookings[i].CheckIn.ToString(DateFormat)} - {bookings[i].CheckOut.ToString(DateFormat)} ({bookings[i].Nights} {nightWord}) | Guests: {bookings[i].GuestCount} (max {bookings[i].GuestCapacity}) | Total price: {bookings[i].TotalPrice} kr");
+        }
+    }
+
+    public void ShowCustomerBookings(List<Booking> bookings, Customer customer)
+    {
+        Console.Clear();
+        ShowBookingList(bookings, customer);
+        PauseBeforeMenu();
+    }
+
+    private void PauseBeforeMenu()
+    {
+        Console.WriteLine("Press any key to return to the menu.");
+        Console.ReadKey(true);
     }
 }

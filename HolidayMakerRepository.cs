@@ -216,4 +216,49 @@ class HolidayMakerRepository
             totalPriceReader.GetInt32("total_nights"),
             totalPriceReader.GetUInt32("total_price"));
     }
+
+    public async Task<List<Booking>> GetCustomerBookingsAsync(uint customerId)
+    {
+        List<Booking> bookings = new();
+
+        await using MySqlConnection connection = await OpenConnectionAsync();
+
+        await using MySqlCommand bookingListCommand = new
+        ("""
+        SELECT bookings.id,
+        accommodations.name AS accommodation_name,
+        rooms.name AS room_name,
+        bookings.booking_start,
+        bookings.booking_end,
+        bookings.guest_count,
+        rooms.max_capacity AS guest_capacity,
+        DATEDIFF(bookings.booking_end, bookings.booking_start) AS total_nights,
+        (DATEDIFF(bookings.booking_end, bookings.booking_start) * rooms.price_per_night) AS total_price
+        FROM bookings
+        JOIN rooms ON bookings.room_id = rooms.id
+        JOIN accommodations ON rooms.accommodation_id = accommodations.id
+        WHERE bookings.customer_id = @customer_id
+        ORDER BY bookings.booking_start;
+        """, connection);
+
+        bookingListCommand.Parameters.AddWithValue("@customer_id", customerId);
+
+        await using MySqlDataReader bookingListReader = await bookingListCommand.ExecuteReaderAsync();
+
+        while (await bookingListReader.ReadAsync())
+        {
+            Booking booking = new(
+                bookingListReader.GetUInt32("id"),
+                bookingListReader.GetString("accommodation_name"),
+                bookingListReader.GetString("room_name"),
+                bookingListReader.GetDateOnly("booking_start"),
+                bookingListReader.GetDateOnly("booking_end"),
+                bookingListReader.GetInt32("total_nights"),
+                bookingListReader.GetUInt32("guest_count"),
+                bookingListReader.GetUInt32("guest_capacity"),
+                bookingListReader.GetUInt32("total_price"));
+            bookings.Add(booking);
+        }
+        return bookings;
+    }
 }
