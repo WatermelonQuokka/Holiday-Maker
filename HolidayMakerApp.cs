@@ -44,7 +44,7 @@ class HolidayMakerApp
                         }
                     case MenuChoice.CancelBooking:
                         {
-                            _ui.ShowNotImplementedMessage();
+                            await CancelBookingAsync();
                             break;
                         }
                     case MenuChoice.Quit:
@@ -213,5 +213,36 @@ class HolidayMakerApp
             return;
         }
         _ui.ShowChangeGuestConfirmationMessage(chosenBooking, newGuestCount);
+    }
+
+    private async Task CancelBookingAsync()
+    {
+        Customer? customer = await RequireCustomerAsync();
+        if (customer is null)
+        {
+            return;
+        }
+        List<Booking> bookings = await _repository.GetCustomerBookingsAsync(customer.Id);
+        if (bookings.Count == 0)
+        {
+            _ui.ShowNoBookingsMessage();
+            return;
+        }
+        Booking? chosenBooking = _ui.AskForBookingChoice(bookings, customer);
+        if (chosenBooking is null)
+        {
+            return;
+        }
+        if (!_ui.ConfirmCancelBooking(chosenBooking))
+        {
+            return;
+        }
+        bool deleted = await _repository.CancelBookingAsync(chosenBooking.BookingId);
+        if (!deleted)
+        {
+            _ui.ShowCancelBookingErrorMessage();
+            return;
+        }
+        _ui.ShowCancelBookingConfirmationMessage(chosenBooking);
     }
 }

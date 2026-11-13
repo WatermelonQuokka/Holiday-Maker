@@ -281,4 +281,21 @@ class HolidayMakerRepository
         int changedRows = await changeBookingCommand.ExecuteNonQueryAsync();
         return changedRows == 1;
     }
+
+    public async Task<bool> CancelBookingAsync(uint bookingId)
+    {
+        await using MySqlConnection connection = await OpenConnectionAsync();
+
+        await using MySqlCommand cancelBookingCommand = new
+        ("""
+        DELETE
+        FROM bookings
+        WHERE bookings.id = @booking_id;
+        """, connection);
+
+        cancelBookingCommand.Parameters.AddWithValue("@booking_id", bookingId);
+
+        int deletedRows = await cancelBookingCommand.ExecuteNonQueryAsync();
+        return deletedRows == 1;
+    }
 }

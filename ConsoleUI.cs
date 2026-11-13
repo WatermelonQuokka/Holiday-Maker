@@ -118,12 +118,7 @@ class ConsoleUI
         ? number
         : null;
     }
-
-    public void ShowNotImplementedMessage()
-    {
-        _lastMessage = "Not implemented yet";
-    }
-
+    
     public void ShowEmptyCustomerListMessage()
     {
         _lastMessage = "No customers found.";
@@ -482,11 +477,8 @@ class ConsoleUI
         Console.WriteLine($"=== Current bookings for {customer.Name} ===");
         for (int i = 0; i < bookings.Count; i++)
         {
-            string nightWord = bookings[i].Nights == 1
-                ? "night"
-                : "nights";
-            Console.WriteLine($"{i + FirstPosition}. Booking number: {bookings[i].BookingId} | {bookings[i].AccommodationName} - Room {bookings[i].RoomName}");
-            Console.WriteLine($"   Dates: {bookings[i].CheckIn.ToString(DateFormat)} - {bookings[i].CheckOut.ToString(DateFormat)} ({bookings[i].Nights} {nightWord}) | Guests: {bookings[i].GuestCount} (max {bookings[i].GuestCapacity}) | Total price: {bookings[i].TotalPrice} kr");
+            Console.Write($"{i + FirstPosition}. ");
+            ShowBookingDetails(bookings[i]);
         }
     }
 
@@ -551,5 +543,30 @@ class ConsoleUI
     public void ShowChangeGuestErrorMessage()
     {
         _lastMessage = "The guest count could not be changed. The booking may have been cancelled. Please check the customer's bookings and try again.";
+    }
+
+    public bool ConfirmCancelBooking(Booking booking)
+    {
+        ShowBookingDetails(booking);
+        return AskYesOrNo("Are you sure you want to cancel this booking");
+    }
+
+    private void ShowBookingDetails(Booking booking)
+    {
+        string nightWord = booking.Nights == 1
+            ? "night"
+            : "nights";
+        Console.WriteLine($"Booking number: {booking.BookingId} | {booking.AccommodationName} - Room {booking.RoomName}");
+        Console.WriteLine($"   Dates: {booking.CheckIn.ToString(DateFormat)} - {booking.CheckOut.ToString(DateFormat)} ({booking.Nights} {nightWord}) | Guests: {booking.GuestCount} (max {booking.GuestCapacity}) | Total price: {booking.TotalPrice} kr");
+    }
+
+    public void ShowCancelBookingConfirmationMessage(Booking booking)
+    {
+        _lastMessage = $"Booking {booking.BookingId} has been cancelled.";
+    }
+
+    public void ShowCancelBookingErrorMessage()
+    {
+        _lastMessage = "The booking could not be cancelled. The booking may have been cancelled already. Please check the customer's bookings and try again.";
     }
 }
