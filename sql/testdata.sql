@@ -1,3 +1,5 @@
+USE holiday_maker;
+
 INSERT INTO cities (name)
 VALUES ('Malmö'),
        ('Helsingborg');

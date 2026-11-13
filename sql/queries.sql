@@ -1,6 +1,6 @@
 -- Run one statement at a time. The INSERT, UPDATE and DELETE statements change data.
 -- Rebuild with schema.sql and testdata.sql afterwards.
-
+USE holiday_maker;
 
 -- List of rooms
 SELECT rooms.id, accommodations.name AS accommodation_name, cities.name AS city_name, rooms.name AS room_name

@@ -1,3 +1,6 @@
+CREATE DATABASE IF NOT EXISTS holiday_maker;
+USE holiday_maker;
+
 DROP TABLE IF EXISTS bookings;
 DROP TABLE IF EXISTS rooms;
 DROP TABLE IF EXISTS customers;
