@@ -86,4 +86,4 @@ In the customer menu and in every list, `0` goes back to the main menu.
 | `Customer.cs`, `City.cs`, `AvailableRoom.cs`, `Booking.cs`, `BookingConfirmation.cs`, `RoomSearch.cs` | Records for the data passed between the classes |
 | `MenuChoice.cs`, `CustomerMenuChoice.cs`, `RoomSortOrder.cs` | Enums for menu and sort choices |
 | `sql/` | Database scripts |
-| `diagram/` | E/R diagram |
+| `diagram/` | The group's conceptual E/R diagram (drawSQL) and the database diagram generated from the final schema (DataGrip) |
