@@ -217,7 +217,7 @@ class ConsoleUI
 
     private DateOnly? ReadDate(string question)
     {
-        return DateOnly.TryParse(ReadText(question), out DateOnly date)
+        return DateOnly.TryParseExact(ReadText(question), DateFormat, out DateOnly date)
             ? date
             : null;
     }
