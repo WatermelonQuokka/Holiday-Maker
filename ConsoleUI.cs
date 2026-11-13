@@ -57,7 +57,7 @@ class ConsoleUI
 
     private void ShowCurrentCustomer(Customer? customer)
     {
-        Console.WriteLine(customer == null
+        Console.WriteLine(customer is null
         ? "No customer chosen."
         : $"Current customer: {customer.Name}");
     }
@@ -88,7 +88,7 @@ class ConsoleUI
             StartNewScreen();
             ShowMenu(currentCustomer);
             int? choice = ReadNumber("Choose an option: ");
-            if (choice != null
+            if (choice is not null
                 && Enum.IsDefined(typeof(MenuChoice), choice.Value))
             {
                 return (MenuChoice)choice.Value;
@@ -101,7 +101,7 @@ class ConsoleUI
     {
         Console.Write(question);
         string? input = Console.ReadLine();
-        if (input == null)
+        if (input is null)
         {
             throw new EndOfStreamException("The input could not be read.");
         }
@@ -139,7 +139,7 @@ class ConsoleUI
             StartNewScreen();
             ShowCustomerMenu();
             int? choice = ReadNumber("Choose an option: ");
-            if (choice != null
+            if (choice is not null
                 && Enum.IsDefined(typeof(CustomerMenuChoice), choice.Value))
             {
                 return (CustomerMenuChoice)choice.Value;
@@ -341,7 +341,7 @@ class ConsoleUI
         {
             ShowSortOrders();
             int? choice = ReadNumber("Choose an option: ");
-            if (choice != null
+            if (choice is not null
                 && Enum.IsDefined(typeof(RoomSortOrder), choice.Value))
             {
                 return (RoomSortOrder)choice.Value;

@@ -104,7 +104,7 @@ class HolidayMakerApp
         }
 
         Customer? chosenCustomer = _ui.AskForCustomerChoice(customers);
-        if (chosenCustomer != null)
+        if (chosenCustomer is not null)
         {
             _currentCustomer = chosenCustomer;
         }
