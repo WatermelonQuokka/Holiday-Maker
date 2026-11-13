@@ -160,6 +160,7 @@ class HolidayMakerRepository
     public async Task<BookingConfirmation?> BookRoomAsync(uint customerId, uint roomId, DateOnly checkIn, DateOnly checkOut, uint guests)
     {
         await using MySqlConnection connection = await OpenConnectionAsync();
+        await using MySqlTransaction transaction = await connection.BeginTransactionAsync();
 
         await using MySqlCommand availabilityCheckCommand = new(
         """
@@ -167,8 +168,9 @@ class HolidayMakerRepository
         FROM bookings
         WHERE bookings.room_id = @room_id
             AND @check_in < booking_end
-            AND @check_out > booking_start;
-        """, connection);
+            AND @check_out > booking_start
+            FOR UPDATE;
+        """, connection, transaction);
 
         availabilityCheckCommand.Parameters.AddWithValue("@room_id", roomId);
         availabilityCheckCommand.Parameters.AddWithValue("@check_in", checkIn);
@@ -185,7 +187,7 @@ class HolidayMakerRepository
         """
         INSERT INTO bookings (customer_id, room_id, booking_start, booking_end, guest_count)
         VALUES (@customer_id, @room_id, @check_in, @check_out, @guests);
-        """, connection);
+        """, connection, transaction);
 
         bookRoomCommand.Parameters.AddWithValue("@customer_id", customerId);
         bookRoomCommand.Parameters.AddWithValue("@room_id", roomId);
@@ -194,6 +196,8 @@ class HolidayMakerRepository
         bookRoomCommand.Parameters.AddWithValue("@guests", guests);
 
         await bookRoomCommand.ExecuteNonQueryAsync();
+
+        await transaction.CommitAsync();
 
         uint bookingId = (uint)bookRoomCommand.LastInsertedId;
 
