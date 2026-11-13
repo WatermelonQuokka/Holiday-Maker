@@ -150,40 +150,12 @@ class ConsoleUI
 
     public string AskForCustomerName()
     {
-        while (true)
-        {
-            string name = ReadText("What is the customer's name: ");
-            if (string.IsNullOrEmpty(name))
-            {
-                Console.WriteLine("Name can't be empty.");
-                continue;
-            }
-            if (name.Length > NameMaxLength)
-            {
-                Console.WriteLine($"Name can't be longer than {NameMaxLength} characters.");
-                continue;
-            }
-            return name;
-        }
+        return AskForRequiredText("name", NameMaxLength);
     }
 
     public string AskForCustomerPhoneNumber()
     {
-        while (true)
-        {
-            string phoneNumber = ReadText("What is the customer's phone number: ");
-            if (string.IsNullOrEmpty(phoneNumber))
-            {
-                Console.WriteLine("Phone number can't be empty.");
-                continue;
-            }
-            if (phoneNumber.Length > PhoneNumberMaxLength)
-            {
-                Console.WriteLine($"Phone number can't be longer than {PhoneNumberMaxLength} characters.");
-                continue;
-            }
-            return phoneNumber;
-        }
+        return AskForRequiredText("phone number", PhoneNumberMaxLength);
     }
 
     public string? AskForCustomerEmail()
@@ -563,5 +535,24 @@ class ConsoleUI
         Console.Clear();
         Console.WriteLine(_lastMessage);
         _lastMessage = null;
+    }
+
+    private string AskForRequiredText(string detail, int maxLength)
+    {
+        while (true)
+        {
+            string input = ReadText($"What is the customer's {detail}: ");
+            if (string.IsNullOrEmpty(input))
+            {
+                Console.WriteLine($"The customer's {detail} can't be empty.");
+                continue;
+            }
+            if (input.Length > maxLength)
+            {
+                Console.WriteLine($"The customer's {detail} can't be longer than {maxLength} characters.");
+                continue;
+            }
+            return input;
+        }
     }
 }
