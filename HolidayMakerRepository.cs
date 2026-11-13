@@ -203,8 +203,9 @@ class HolidayMakerRepository
 
         await using MySqlCommand totalPriceCommand = new(
         """
-        SELECT DATEDIFF(bookings.booking_end, bookings.booking_start) AS total_nights,
-        (DATEDIFF(bookings.booking_end, bookings.booking_start)* rooms.price_per_night) AS total_price
+        SELECT
+            DATEDIFF(bookings.booking_end, bookings.booking_start) AS total_nights,
+            (DATEDIFF(bookings.booking_end, bookings.booking_start)* rooms.price_per_night) AS total_price
         FROM bookings
         JOIN rooms ON bookings.room_id = rooms.id
         WHERE bookings.id = @booking_id;
@@ -230,14 +231,14 @@ class HolidayMakerRepository
         await using MySqlCommand bookingListCommand = new
         ("""
         SELECT bookings.id,
-        accommodations.name AS accommodation_name,
-        rooms.name AS room_name,
-        bookings.booking_start,
-        bookings.booking_end,
-        bookings.guest_count,
-        rooms.max_capacity AS guest_capacity,
-        DATEDIFF(bookings.booking_end, bookings.booking_start) AS total_nights,
-        (DATEDIFF(bookings.booking_end, bookings.booking_start) * rooms.price_per_night) AS total_price
+            accommodations.name AS accommodation_name,
+            rooms.name AS room_name,
+            bookings.booking_start,
+            bookings.booking_end,
+            bookings.guest_count,
+            rooms.max_capacity AS guest_capacity,
+            DATEDIFF(bookings.booking_end, bookings.booking_start) AS total_nights,
+            (DATEDIFF(bookings.booking_end, bookings.booking_start) * rooms.price_per_night) AS total_price
         FROM bookings
         JOIN rooms ON bookings.room_id = rooms.id
         JOIN accommodations ON rooms.accommodation_id = accommodations.id

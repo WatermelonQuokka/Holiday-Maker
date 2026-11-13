@@ -78,17 +78,23 @@ ORDER BY name;
 -- Checking availability of the room before booking
 SET @room_id = 19;
 
+START TRANSACTION;
+
 SELECT COUNT(*)
 FROM bookings
 WHERE bookings.room_id = @room_id
     AND @check_in < booking_end
-    AND @check_out > booking_start;
+    AND @check_out > booking_start
+    FOR UPDATE;
 
 -- Add customer booking
 SET @customer_id = 2;
 
+-- The program only runs this if the count above is 0
 INSERT INTO bookings (customer_id, room_id, booking_start, booking_end, guest_count)
 VALUES (@customer_id, @room_id, @check_in, @check_out, @guests);
+
+COMMIT;
 
 -- Shows last id added
 SELECT LAST_INSERT_ID();
@@ -104,12 +110,14 @@ WHERE bookings.id = @booking_id;
 
 -- All bookings for one customer
 SELECT bookings.id,
-       accommodations.name AS accommodation_name,
-       rooms.name AS room_name,
-       bookings.booking_start,
-       bookings.booking_end,
-       bookings.guest_count,
-       (DATEDIFF(bookings.booking_end, bookings.booking_start) * rooms.price_per_night) AS total_price
+    accommodations.name AS accommodation_name,
+    rooms.name AS room_name,
+    bookings.booking_start,
+    bookings.booking_end,
+    bookings.guest_count,
+    rooms.max_capacity AS guest_capacity,
+    DATEDIFF(bookings.booking_end, bookings.booking_start) AS total_nights,
+    (DATEDIFF(bookings.booking_end, bookings.booking_start) * rooms.price_per_night) AS total_price
 FROM bookings
 JOIN rooms ON bookings.room_id = rooms.id
 JOIN accommodations ON rooms.accommodation_id = accommodations.id
