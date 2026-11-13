@@ -189,18 +189,7 @@ class HolidayMakerApp
 
     private async Task ChangeGuestCountAsync()
     {
-        Customer? customer = await RequireCustomerAsync();
-        if (customer is null)
-        {
-            return;
-        }
-        List<Booking> bookings = await _repository.GetCustomerBookingsAsync(customer.Id);
-        if (bookings.Count == 0)
-        {
-            _ui.ShowNoBookingsMessage();
-            return;
-        }
-        Booking? chosenBooking = _ui.AskForBookingChoice(bookings, customer);
+        Booking? chosenBooking = await RequireChosenBookingAsync();
         if (chosenBooking is null)
         {
             return;
@@ -217,18 +206,7 @@ class HolidayMakerApp
 
     private async Task CancelBookingAsync()
     {
-        Customer? customer = await RequireCustomerAsync();
-        if (customer is null)
-        {
-            return;
-        }
-        List<Booking> bookings = await _repository.GetCustomerBookingsAsync(customer.Id);
-        if (bookings.Count == 0)
-        {
-            _ui.ShowNoBookingsMessage();
-            return;
-        }
-        Booking? chosenBooking = _ui.AskForBookingChoice(bookings, customer);
+        Booking? chosenBooking = await RequireChosenBookingAsync();
         if (chosenBooking is null)
         {
             return;
@@ -244,5 +222,21 @@ class HolidayMakerApp
             return;
         }
         _ui.ShowCancelBookingConfirmationMessage(chosenBooking);
+    }
+
+    private async Task<Booking?> RequireChosenBookingAsync()
+    {
+        Customer? customer = await RequireCustomerAsync();
+        if (customer is null)
+        {
+            return null;
+        }
+        List<Booking> bookings = await _repository.GetCustomerBookingsAsync(customer.Id);
+        if (bookings.Count == 0)
+        {
+            _ui.ShowNoBookingsMessage();
+            return null;
+        }
+        return _ui.AskForBookingChoice(bookings, customer);
     }
 }
