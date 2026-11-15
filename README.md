@@ -87,3 +87,4 @@ In the customer menu and in every list, `0` goes back to the main menu.
 | `MenuChoice.cs`, `CustomerMenuChoice.cs`, `RoomSortOrder.cs` | Enums for menu and sort choices |
 | `sql/` | Database scripts |
 | `diagram/` | The group's conceptual E/R diagram (drawSQL) and the database diagram generated from the final schema (DataGrip) |
+| `docs/` | Test notes (`Test-notes.md`) and individual reflection (`Reflection.md`) |
