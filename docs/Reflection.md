@@ -25,4 +25,8 @@
 <!-- Briefly describe whether and how you used AI or other help during the work,
      and how you checked the result. -->
 - **AI:** AI was used as a tutor for hints and questions however the schema, queries and C# code were written by me. The test data names, the 24 extra test bookings and README text were produced by AI at my request. The README was checked line by line against the code. The test data was checked with a `COUNT` query (25 bookings) and the capacity query (0 over capacity). The transaction with `FOR UPDATE` was suggested and I **tested** the lock with DataGrip instead of trusting it.
-- **Other help:** The group made the conceptual E/R diagram and my database diagram is generated from my own final schema with for example `guest_count` added.
+- **Other help:** The group made the conceptual E/R diagram and my database diagram is generated from my own final schema with for example `guest_count` added. 
+- **Literature:** Berglund, B. (2026). *Studera SQL – prata med data: Datafilosofi och
+praktisk implementation* (NH2026-3). Node Hill Research Laboratory.
+https://weehorse.github.io/Studera-SQL-prata-med-data/sv/
+It was my main source for learning SQL and MySQL in this course and this project is the result of applying what I've learned to my own design.
